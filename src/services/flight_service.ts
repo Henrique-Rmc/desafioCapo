@@ -13,5 +13,19 @@ export class FlightService{
         await this.flightRepository.saveFlight(flight);
         
     }
+
+    async findFlightByNumber(number: string): Promise<void>{
+        if(!number){
+            throw new Error('Numero de vôo inválido')
+        }
+        await this.flightRepository.findByNumber(number)
+    }
+
+    async existsByNumber(number: string): Promise<void>{
+        if(!number){
+            throw new Error('Numero de vôo inválido')
+        }
+        await this.flightRepository.existsByNumber(number)
+    }
 }
 

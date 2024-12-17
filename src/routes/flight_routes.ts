@@ -19,4 +19,5 @@ flightRouter.post("/create", async (req, res) => {
   }
 });
 
+
 export { flightRouter };
