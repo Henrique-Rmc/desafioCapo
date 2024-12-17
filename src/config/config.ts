@@ -1,6 +1,5 @@
 import mysql from 'mysql2/promise';
 
-// Configurações de conexão com o banco de dados usando variáveis de ambiente
 export const db = mysql.createPool({
     host: process.env.MYSQL_HOST || 'localhost',
     user: process.env.MYSQL_USER || 'root',
@@ -15,6 +14,6 @@ export const checkDbConnection = async () => {
         console.log("Conexão com o banco de dados estabelecida com sucesso.");
     } catch (error) {
         console.error("Erro ao conectar com o banco de dados:", error);
-        process.exit(1);  // Encerra o servidor se não conseguir conectar ao banco
+        process.exit(1); 
     }
 };
