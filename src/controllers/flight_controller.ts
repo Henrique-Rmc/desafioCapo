@@ -9,8 +9,8 @@ export class FlightController {
         try {
             const data = req.body;
 
-            const validatedData = data;
-
+            const validatedData = flightSchema.parse(data)
+            console.log(validatedData)
             await this.flightService.createFlight(validatedData);
 
             res.status(201).json({ message: "Voo criado com sucesso" });
