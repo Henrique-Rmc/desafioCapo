@@ -3,11 +3,13 @@ import bodyParser from 'body-parser';
 import { flightRouter } from './routes/flight_routes';
 import { checkDbConnection } from './config/config';
 import dotenv from 'dotenv';
+import { reservationRouter } from './routes/reservation_routes';
 
 dotenv.config(); 
 const app = express();
 app.use(bodyParser.json());
 app.use('/flight', flightRouter);
+app.use('/reservation', reservationRouter);
 
 // Obtém a porta da variável de ambiente ou usa a 3000 como padrão
 const PORT = process.env.PORT || 3000;
