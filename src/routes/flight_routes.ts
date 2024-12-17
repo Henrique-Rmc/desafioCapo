@@ -14,7 +14,7 @@ flightRouter.post("/create", async (req, res) => {
   try {
     await flightController.createFlightHandler(req, res);
   } catch (error) {
-    console.error("Erro ao criar voo:", error);
+    console.error("Erro ao acessar rota de criar voo:", error);
     res.status(500).json({ error: "Erro interno do servidor." });
   }
 });
