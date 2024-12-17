@@ -71,4 +71,40 @@ export class FlightRepository{
 
     }
 
+    async reserveSeat(flightNumber: string, connection: any): Promise<void | null> {
+        const checkQuery = `SELECT * FROM flights WHERE flightNumber = ?;`;
+        const updateQuery = `UPDATE flights SET capacity = capacity - 1 WHERE flightNumber = ? AND capacity > 0;`;
+    
+        try {
+            const [rows]: any[] = await connection.execute(checkQuery, [flightNumber]);
+    
+            if (rows.length === 0) {
+                console.log("Vôo não encontrado.");
+                return null; 
+            }
+    
+            const flight = rows[0];
+    
+            if (flight.capacity <= 0) {
+                console.log("Sem assentos disponíveis.");
+                return null;  
+            }
+    
+            const [result]: any = await connection.execute(updateQuery, [flightNumber]);
+    
+            if (result.affectedRows === 0) {
+                console.log("Falha em reservar assento. O voo pode estar lotado.");
+                return null; 
+            }
+    
+            console.log("Assento reservado com sucesso.");
+            return null; 
+        } catch (error) {
+            console.error("Erro ao reservar assento:", error);
+            throw error;  
+        }
+    }
+    
+    
+
 }
