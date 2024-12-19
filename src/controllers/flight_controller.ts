@@ -1,6 +1,7 @@
-import { flightSchema } from "../schemas/flight_schema";
+import { findflightSchema, flightSchema } from "../schemas/flight_schema";
 import { Request, Response } from "express";
 import { FlightService } from "../services/flight_service";
+import { Flight } from "../models/Flight";
 
 export class FlightController {
     constructor(private flightService: FlightService) {}
@@ -31,4 +32,34 @@ export class FlightController {
             }
         }
     }
+
+    async getFlightHandler(req: Request, res: Response): Promise<void> {
+        try{
+            const origin = decodeURIComponent(req.query.origin as string);
+            const destination = decodeURIComponent(req.query.destination as string);
+            const departureTime = req.query.date as string;
+            console.log(origin)
+            console.log(destination)
+            // const flightParams = findflightSchema.parse({
+            //     origin,
+            //     destination,
+            //     departureTime
+            // })
+            
+            // const flights = await FlightService.getFlights(
+            //     flightParams.origin,
+            //     flightParams.destination,
+            //     flightParams.departureTime
+            // )
+            const flights = await FlightService.getFlights(
+                origin,
+                destination,
+                departureTime
+            )
+            res.status(200).json(flights)
+        }catch(error){
+            res.status(500).json({error: "Internal Server Error"})
+        }
+    }
+
 }

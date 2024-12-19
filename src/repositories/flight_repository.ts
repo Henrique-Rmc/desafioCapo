@@ -49,7 +49,7 @@ export class FlightRepository{
         }
 
     }
-    async existsByNumber(number: string):Promise<Boolean>{
+    async existsByNumber(number: string):Promise<boolean>{
         /**
         * Busca um Vôo no banco de dados pelo numero
         * @param number Dados do voo.
@@ -69,6 +69,15 @@ export class FlightRepository{
             throw new Error("Erro ao Buscar Vôo")
         }
 
+    }
+
+    static async findByRouteAndDate(origin: string, destination: string, date: string): Promise<any> {
+        const query = `
+            SELECT * FROM flights
+            WHERE origin = ? AND destination = ? AND DATE(departureTime) = ?
+        `;
+        const [rows]: any[] = await db.query(query, [origin, destination, date]);
+        return rows;
     }
 
     async reserveSeat(flightNumber: string, connection: any): Promise<void | null> {
