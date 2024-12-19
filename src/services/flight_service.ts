@@ -22,12 +22,23 @@ export class FlightService{
 
     static async getFlights(origin: string, destination: string, date: string): Promise<any> {
         try {
-            return await FlightRepository.findByRouteAndDate(origin, destination, date);
+            const flights = await FlightRepository.findByRouteAndDate(origin, destination, date);
+    
+            if (!flights || flights.length === 0) {
+                throw new Error("Nenhum voo encontrado para a rota e data especificadas.");
+            }
+    
+            return flights;
         } catch (error) {
-            throw new Error("Error while fetching flights");
+            console.error("Error in FlightService.getFlights:", error);
+    
+            if (error instanceof Error) {
+                throw new Error(error.message);
+            } else {
+                throw new Error("Erro desconhecido ao buscar voos.");
+            }
         }
     }
-
     async findFlightByNumber(number: string): Promise<Flight | null> {
         if (!number || number.trim() === "") {
             throw new Error("Número de vôo inválido");

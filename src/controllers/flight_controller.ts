@@ -37,28 +37,27 @@ export class FlightController {
         try{
             const origin = decodeURIComponent(req.query.origin as string);
             const destination = decodeURIComponent(req.query.destination as string);
-            const departureTime = req.query.date as string;
-            console.log(origin)
-            console.log(destination)
-            // const flightParams = findflightSchema.parse({
-            //     origin,
-            //     destination,
-            //     departureTime
-            // })
-            
-            // const flights = await FlightService.getFlights(
-            //     flightParams.origin,
-            //     flightParams.destination,
-            //     flightParams.departureTime
-            // )
-            const flights = await FlightService.getFlights(
+            const date = req.query.date as string;
+            const flightParams = findflightSchema.parse({
                 origin,
                 destination,
-                departureTime
+                departureTime: date
+            })
+            
+            const flights = await FlightService.getFlights(
+                flightParams.origin,
+                flightParams.destination,
+                flightParams.departureTime
             )
             res.status(200).json(flights)
-        }catch(error){
-            res.status(500).json({error: "Internal Server Error"})
+        }catch (error) {
+            console.error("Error in getFlightHandler:", error);
+    
+            if (error instanceof Error) {
+                res.status(400).json({ error: error.message }); // Resposta detalhada para erros conhecidos
+            } else {
+                res.status(500).json({ error: "Internal Server Error" }); // Erro genérico para outros casos
+            }
         }
     }
 

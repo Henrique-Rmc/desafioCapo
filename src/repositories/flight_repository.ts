@@ -3,7 +3,10 @@ import { db } from "../config/config";
 import { flightSchema } from "../schemas/flight_schema";
 
 export class FlightRepository{
- 
+    /**
+     * 
+     * @param flight 
+     */
     async saveFlight(flight: Flight): Promise<void>{
         /**
         * Insere um voo no banco de dados.
@@ -70,16 +73,27 @@ export class FlightRepository{
         }
 
     }
-
+    /**
+     * 
+     * @param origin 
+     * @param destination 
+     * @param date 
+     * @returns 
+     */
     static async findByRouteAndDate(origin: string, destination: string, date: string): Promise<any> {
         const query = `
             SELECT * FROM flights
-            WHERE origin = ? AND destination = ? AND DATE(departureTime) = ?
+            WHERE origin = ? AND destination = ? AND DATE(departureTime) = ? AND capacity > 0
         `;
         const [rows]: any[] = await db.query(query, [origin, destination, date]);
         return rows;
     }
-
+    /**
+     * 
+     * @param flightNumber 
+     * @param connection 
+     * @returns 
+     */
     async reserveSeat(flightNumber: string, connection: any): Promise<void | null> {
         const checkQuery = `SELECT * FROM flights WHERE flightNumber = ?;`;
         const updateQuery = `UPDATE flights SET capacity = capacity - 1 WHERE flightNumber = ? AND capacity > 0;`;
