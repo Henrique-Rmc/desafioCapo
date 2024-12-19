@@ -6,18 +6,22 @@ export class FlightService{
     
     constructor(private flightRepository: FlightRepository) {}
 
-    async createFlight(flight: Flight): Promise<void>{
-        if(!flight){
-            throw new Error('Vôo inválido')
+    async createFlight(flight: Flight): Promise<void> {
+        if (!flight) {
+            throw new Error('Vôo inválido');
         }
         try {
+            const exists = await this.flightRepository.existsByNumber(flight.flightNumber);
+            if (exists) {
+                throw new Error("Já existe um vôo cadastrado com o Flight Number inserido");
+            }
+            
             await this.flightRepository.saveFlight(flight);
             console.log(`Voo ${flight.flightNumber} criado com sucesso.`);
         } catch (error) {
-            console.error("Erro ao salvar o voo:", error);
+            console.error("Erro ao criar o voo:", error);
             throw new Error("Erro ao criar o voo. Por favor, tente novamente.");
         }
-        
     }
 
     static async getFlights(origin: string, destination: string, date: string): Promise<any> {

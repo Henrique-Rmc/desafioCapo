@@ -3,18 +3,26 @@ services:
   app:
     build: .
     ports:
-      - "3000:3000"
+      - "3001:3000"
     depends_on:
       - db
     environment:
       MYSQL_HOST: db
       MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_DATABASE: airline
+      MYSQL_PASSWORD: 0102
+      MYSQL_DATABASE: flights
+      PORT: 3000
+    volumes:
+      - .:/usr/src/app 
   db:
     image: mysql:8.0
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: airline
+      MYSQL_ROOT_PASSWORD: 0102
+      MYSQL_DATABASE: flights
+    volumes:
+      - db_data:/var/lib/mysql 
+
+volumes:
+  db_data:
