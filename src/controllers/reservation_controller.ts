@@ -8,7 +8,7 @@ import path from "path";
 
 
 export class ReservationController{
-    constructor(private reservationService: ReservationService){}
+    constructor(public reservationService: ReservationService){}
 
     async createReservationHandler(req: Request, res: Response): Promise<void>{
         try{

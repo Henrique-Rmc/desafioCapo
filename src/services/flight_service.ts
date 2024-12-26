@@ -24,9 +24,9 @@ export class FlightService{
         }
     }
 
-    static async getFlights(origin: string, destination: string, date: string): Promise<any> {
+    async getFlights(data: any): Promise<any> {
         try {
-            const flights = await FlightRepository.findByRouteAndDate(origin, destination, date);
+            const flights = await FlightRepository.findByRouteAndDate(data.origin, data.destination, data.date);
     
             if (!flights || flights.length === 0) {
                 throw new Error("Nenhum voo encontrado para a rota e data especificadas.");
