@@ -52,27 +52,30 @@ export class FlightRepository{
         }
 
     }
-    async existsByNumber(number: string):Promise<boolean>{
+    async existsByNumber(number: string): Promise<boolean> {
         /**
-        * Busca um Vôo no banco de dados pelo numero
-        * @param number Dados do voo.
-        */  
-       const query =`SELECT *
-                    FROM flights
-                    WHERE flightNumber = ?;`
-
-        try{const [rows]: any[] = await db.query(query, [number])
-            if(rows.lenght === 0){
-                return false
+         * Busca um Vôo no banco de dados pelo número.
+         * @param number Dados do voo.
+         */  
+        const query = `SELECT *
+                       FROM flights
+                       WHERE flightNumber = ?;`;
+    
+        try {
+            const [rows]: any[] = await db.query(query, [number]);
+    
+            if (rows.length === 0) {
+                return false; 
             }
-            console.log("Vôo encontrado:")
-            return true;
-        }catch (error){
-            console.error("Erro Ao buscar um vôo com nesse parametro", error)
-            throw new Error("Erro ao Buscar Vôo")
+    
+            console.log("Vôo encontrado:", rows);
+            return true; 
+        } catch (error) {
+            console.error("Erro ao buscar voo com esse parâmetro:", error);
+            throw new Error("Erro ao buscar voo");
         }
-
     }
+    
     /**
      * 
      * @param origin 

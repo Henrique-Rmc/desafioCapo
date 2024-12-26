@@ -4,7 +4,7 @@ import { FlightService } from "../services/flight_service";
 import { Flight } from "../models/Flight";
 
 export class FlightController {
-    constructor(private flightService: FlightService) {}
+    constructor(public flightService: FlightService) {}
 
     async createFlightHandler(req: Request, res: Response): Promise<void> {
         try {
@@ -34,29 +34,39 @@ export class FlightController {
     }
 
     async getFlightHandler(req: Request, res: Response): Promise<void> {
-        try{
-            const origin = decodeURIComponent(req.query.origin as string);
-            const destination = decodeURIComponent(req.query.destination as string);
-            const date = req.query.date as string;
+        try {
+            const { origin, destination, date } = req.query as {
+                origin?: string;
+                destination?: string;
+                date?: string;
+            };
+    
+            if (!origin || !destination || !date) {
+                throw new Error("Parâmetros ausentes ou inválidos.");
+            }
+    
+            // Validação dos parâmetros
             const flightParams = findflightSchema.parse({
-                origin,
-                destination,
-                departureTime: date
-            })
-            
-            const flights = await FlightService.getFlights(
-                flightParams.origin,
-                flightParams.destination,
-                flightParams.departureTime
-            )
-            res.status(200).json(flights)
-        }catch (error) {
+                origin: decodeURIComponent(origin),
+                destination: decodeURIComponent(destination),
+                departureTime: date,
+            });
+    
+            // Chamada ao serviço com um objeto
+            const flights = await this.flightService.getFlights({
+                origin: flightParams.origin,
+                destination: flightParams.destination,
+                date: flightParams.departureTime,
+            });
+    
+            res.status(200).json(flights);
+        } catch (error) {
             console.error("Error in getFlightHandler:", error);
     
             if (error instanceof Error) {
-                res.status(400).json({ error: error.message }); // Resposta detalhada para erros conhecidos
+                res.status(400).json({ error: error.message });
             } else {
-                res.status(500).json({ error: "Internal Server Error" }); // Erro genérico para outros casos
+                res.status(500).json({ error: "Internal Server Error" });
             }
         }
     }
