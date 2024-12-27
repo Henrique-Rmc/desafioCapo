@@ -67,7 +67,7 @@ describe("ReservationController", () => {
                 mockResponse as Response
             );
 
-            expect(mockResponse.status).toHaveBeenCalledWith(201);
+            expect(mockResponse.status).toHaveBeenCalledWith(200);
             expect(mockResponse.json).toHaveBeenCalledWith({ message: "Reserva criado com sucesso" });
         });
 
@@ -90,4 +90,87 @@ describe("ReservationController", () => {
             });
         });
     });
+
+    describe("findReservationsByUserNameHandler", () => {
+        describe("ReservationController", () => {
+            let reservationController: ReservationController;
+            let mockRequest: Partial<Request>;
+            let mockResponse: Partial<Response>;
+    
+            const mockReservationService = {
+                getReservationByName: jest.fn(),
+            };
+    
+            beforeEach(() => {
+                reservationController = new ReservationController(mockReservationService as any);
+    
+                mockRequest = {
+                    query: {},
+                };
+                mockResponse = {
+                    status: jest.fn().mockReturnThis(),
+                    json: jest.fn(),
+                };
+            });
+    
+            it("Deve retornar todas as reservas de um usuário pelo nome", async () => {
+                mockRequest.query = { name: "João" };
+    
+                const mockResults = [
+                    {
+                        reservationId: 1,
+                        userId: 3,
+                        userName: "João da Silva",
+                        flightId: 2,
+                        flightNumber: "CD456",
+                        origin: "Brasília",
+                        destination: "Salvador",
+                        departureTime: "2024-12-21T11:00:00.000Z",
+                        arrivalTime: "2024-12-21T13:30:00.000Z",
+                        capacity: 150,
+                    },
+                ];
+    
+                jest.spyOn(mockReservationService, "getReservationByName").mockResolvedValue(mockResults);
+    
+                await reservationController.getReservationsBy(
+                    mockRequest as Request,
+                    mockResponse as Response
+                );
+    
+                expect(mockReservationService.getReservationByName).toHaveBeenCalledWith("João");
+                expect(mockResponse.status).toHaveBeenCalledWith(200);
+                expect(mockResponse.json).toHaveBeenCalledWith(mockResults);
+            });
+    
+            it("Deve retornar uma lista vazia se não houver reservas para o usuário", async () => {
+                mockRequest.query = { name: "UsuárioInexistente" };
+    
+                jest.spyOn(mockReservationService, "getReservationByName").mockResolvedValue([]);
+    
+                await reservationController.getReservationsBy(
+                    mockRequest as Request,
+                    mockResponse as Response
+                );
+    
+                expect(mockReservationService.getReservationByName).toHaveBeenCalledWith("UsuárioInexistente");
+                expect(mockResponse.status).toHaveBeenCalledWith(200);
+                expect(mockResponse.json).toHaveBeenCalledWith([]);
+            });
+    
+            it("Deve retornar erro 400 se o nome do usuário não for fornecido", async () => {
+                mockRequest.query = {};
+    
+                await reservationController.getReservationsBy(
+                    mockRequest as Request,
+                    mockResponse as Response
+                );
+    
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({ error: "O nome do usuario é necessario" });
+            });
+        });
+    });
+    
 });
+

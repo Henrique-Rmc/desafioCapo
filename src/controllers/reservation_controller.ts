@@ -8,6 +8,7 @@ import path from "path";
 
 
 export class ReservationController{
+
     constructor(public reservationService: ReservationService){}
 
     async createReservationHandler(req: Request, res: Response): Promise<void>{
@@ -20,7 +21,7 @@ export class ReservationController{
             const pdfFilePath = await this.generateReservationPDF(validatedData);
             const downloadLink = `${req.protocol}://${req.get("host")}/downloads/${path.basename(pdfFilePath)}`;
 
-            res.status(201).json({ message: "Reserva criado com sucesso" });
+            res.status(200).json({ message: "Reserva criado com sucesso" });
         }catch (error: any) {
         if (error.name === "ZodError") {
             res.status(400).json({
@@ -36,7 +37,8 @@ export class ReservationController{
             });
         }
     }
-}
+    }
+
 
     private async generateReservationPDF(data: any): Promise<string> {
         const { clientName, flightNumber, reservationDate } = data;
@@ -63,4 +65,22 @@ export class ReservationController{
             writeStream.on("error", (error) => reject(error));
         });
     }
+
+    async getReservationsBy(req: Request, res: Response): Promise<void>{
+        try{
+            const {name} = req.query as {name?: string}
+            if(!name){
+                res.status(400).json({error:"O nome do usuario é necessario"})
+                return;
+            }
+
+            const reservations = await this.reservationService.getReservationByName(name)
+
+            res.status(200).json(reservations);
+        }catch (error: any) {
+            console.error("Error in getReservationsByUserName:", error);
+            res.status(500).json({ error: "Erro ao buscar reservas." });
+        }
     }
+   
+}
