@@ -45,14 +45,12 @@ export class FlightController {
                 throw new Error("Parâmetros ausentes ou inválidos.");
             }
     
-            // Validação dos parâmetros
             const flightParams = findflightSchema.parse({
                 origin: decodeURIComponent(origin),
                 destination: decodeURIComponent(destination),
                 departureTime: date,
             });
     
-            // Chamada ao serviço com um objeto
             const flights = await this.flightService.getFlights({
                 origin: flightParams.origin,
                 destination: flightParams.destination,

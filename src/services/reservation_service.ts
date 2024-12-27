@@ -35,4 +35,10 @@ export class ReservationService {
             connection.release(); 
         }
     }
+
+    async getReservationByName(userName: string) {
+        return this.reservationRepo.findReservationsByUserName(userName);
+    }
+
+
 }

@@ -22,4 +22,12 @@ reservationRouter.post("/create", async(req, res)=>{
     }
 })
 
+reservationRouter.get("/", async(req, res)=>{
+    try{
+        await reservationController.getReservationsBy(req, res)
+    }catch(error){
+        console.log("Erro ao acessar rota para buscar usuario")
+        res.status(500).json({ error: "Erro interno do servidor." });
+    }
+})
 export {reservationRouter}
